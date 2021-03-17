@@ -4,6 +4,7 @@ import markdown
 import os
 import matplotlib.pyplot as plt
 import workspace
+import utils
 # import pdb # for DEBUG
 
 @workspace.require_workspace_selected
@@ -62,7 +63,9 @@ def parse_args():
 
 if __name__ == "__main__":
     
-    workspace.create_json_if_not_exist()
+    utils.create_json_if_not_exist()
+    utils.create_dir_if_not_exist("data")
+    utils.create_dir_if_not_exist("out")
 
     parser = parse_args()
 

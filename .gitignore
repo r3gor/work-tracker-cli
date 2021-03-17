@@ -2,6 +2,6 @@
 /out
 /xt
 /data
-*txt
+task*
 db-log*
 ws.json
