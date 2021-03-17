@@ -5,6 +5,7 @@ import os
 import matplotlib.pyplot as plt
 import workspace
 import utils
+import sqlalchemy.sql.default_comparator # for ERROR: missing dll's  
 # import pdb # for DEBUG
 
 @workspace.require_workspace_selected
