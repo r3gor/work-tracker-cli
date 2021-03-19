@@ -2,7 +2,8 @@ import argparse
 import db
 import markdown
 import os
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
+# from matplotlib import pyplot as plt
 import workspace
 import utils
 import sqlalchemy.sql.default_comparator # for ERROR: missing dll's  
@@ -24,8 +25,11 @@ def pie_chart_report():
     x = [i.value for i in db.get_all_tasks()]
     lbl = [i.name for i in db.get_all_tasks()]
     exp = [0.05 for i in lbl]
-    plt.pie(x, labels=lbl, explode=exp, autopct='%1.1f%%', pctdistance=0.5, shadow=False)
-    plt.show()
+    print("plotting not avaliable")
+    print(f"vals:\t{x}")
+    print(f"labels:\t{lbl}")
+    # plt.pie(x, labels=lbl, explode=exp, autopct='%1.1f%%', pctdistance=0.5, shadow=False)
+    # plt.show()
 
 
 @workspace.require_workspace_selected
