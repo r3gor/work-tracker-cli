@@ -1,7 +1,7 @@
 from os import name
 from sqlalchemy import create_engine, Column, Integer, String, Date, Time
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship, sessionmaker
+from sqlalchemy.orm import relationship, session, sessionmaker
 from sqlalchemy.sql.schema import ForeignKey
 from datetime import datetime
 import workspace
@@ -28,7 +28,7 @@ class Task(DB.Base):
     value = Column(Integer, default=0)
     work_records = relationship('WorkRecord', backref='task', lazy="dynamic")
     def __repr__(self) -> str:
-        return f"<Task(name={self.name})>"
+        return f"<Task(name={self.name}, value={self.value})>"
 
 class WorkRecord(DB.Base):
     __tablename__ = 'workrecord'
@@ -51,17 +51,49 @@ def create_all():
 def get_all_tasks():
     return DB.session.query(Task).all() #TODO error if db not created!! add raise
 
-def get_all_work_reports():
+def get_all_work_records():
     return DB.session.query(WorkRecord).all() #TODO error if db not created!! add raise
 
 def find_task(_id):
     return DB.session.query(Task).filter_by(id=_id).first()
+
+def find_work_record(_id):
+    return DB.session.query(WorkRecord).filter_by(id=_id).first()
 
 def add_record(task_id, _value):
     _task = find_task(task_id)
     _task.value += _value
     record = WorkRecord(task=_task, value=_value)
     DB.session.add(record)
+    DB.session.commit()
+
+def edit_record(wr_id, campo, new_value): 
+                                        # TODO: improve database design!
+                                        # the "value" field in table Task is unnecessary!!
+    record = find_work_record(wr_id)
+    print("[DB]\tmodified record!\ndetails:")
+    print("before:\t", record)
+    record.task.value -= record.value
+
+    setattr(record, campo, new_value)   # this modifies the id
+                                        
+    DB.session.commit() # then commit to load the respective task
+                        # object to the workrecord object
+    
+    record.task.value += record.value # finally we edit the task 
+                                      # object updated by the id before
+    
+    DB.session.commit() # commit changes in task object
+
+    print("after:\t", record)
+    
+def delete_record(wr_id):
+    r = find_work_record(wr_id)
+    print("[DB]\trecord removed: ")
+    print(r)
+    r.task.value -= r.value
+    DB.session.delete(r)
+    # DB.session.query(WorkRecord).find_by(id=wr_id).delete()
     DB.session.commit()
 
 def init(tasks_name):
@@ -72,4 +104,8 @@ def init(tasks_name):
 
 
 if __name__ == "__main__":
-    pass
+    DB.load_db()
+    r = DB.session.query(WorkRecord)[0]
+    # print(r)
+    edit_record(r.id, "value", 100)
+    # edit_record(r.id, "task_id", 2)
